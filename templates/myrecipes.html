@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Recipes</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
+  <style>
+    .bg-cover {
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+
+.form-control {
+    box-shadow: none !important;
+}
+
+.form-select {
+    box-shadow: none !important;
+}
+  </style>
+</head>
+
+<body>
+
+  <div class="min-vh-100 d-flex flex-column bg-cover">
+
+    <nav class="navbar navbar-expand-lg bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand text-white fw-bold" href="#"><i class="fa-solid fa-bowl-food"></i> RECIPE ROVER</a>
+        <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <i class="fa-solid fa-bars text-white"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link text-white fw-bold" aria-current="page" href="{{ url_for('search') }}">Search</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white fw-bold text-decoration-underline link-offset-3 active link-underline-light" href="{{ url_for('myrecipes') }}">My Recipes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white fw-bold" href="{{ url_for('upload') }}">Upload</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white fw-bold" href="{{ url_for('logout') }}">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid bg-dark">
+
+      <div class="card border-0 bg-dark mt-5 mb-5">
+        <div class="card-body d-flex justify-content-between align-items-center p-3">
+          <div>
+            <h2 class="text-white fw-bold">My Recipes</h2>
+            <h6 class="text-white fw-bold"></h6>
+          </div>
+          <form id="searchform" action="/searchpage" method="GET">
+            <div class="input-group gap-3">
+              <input type="text" class="form-control shadow-none" placeholder="Search for recipes" name="search"
+                id="search">
+              <button class="btn btn-primary shadow-none" type="submit">Search</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="container bg-white my-4">
+
+      <div class="row justify-content-center mb-3 mt-4">
+
+        <div class="col-md-12">
+
+
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="usertable">
+              <thead class="text-white">
+                <tr class="align-middle text-center text-nowrap table-primary">
+                  <th class="dt-head-center">Name</th>
+                  <th class="dt-head-center">Category</th>
+                  <th class="dt-head-center">Forked On</th>
+                  <th class="dt-head-center">Details</th> 
+                </tr>
+              </thead>
+              <tbody class="text-center">
+                {% for recipe in recipes %}
+                <tr>
+                  <td>{{ recipe[5] }}</td>
+                  <td>{{ recipe[7] }}</td>
+                  <td>{{ recipe[11] }}</td> 
+                  <td><a href="{{ url_for('myrecipe', recipe=recipe[1]) }}" class="btn btn-primary shadow-none btn-sm">View</a></td> </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="flex-grow-1"></div>
+
+    <footer class="bg-secondary text-uppercase text-white text-center border-top border-dark">
+      RECIPE ROVER © <span id="year"></span>
+    </footer>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+  <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+  <script>
+    $(function () {
+
+      $("#year").html(new Date().getFullYear());
+
+      
+      $("#searchform").on("submit", function (e) {
+        debugger;
+
+        var search = $("#search").val().trim()
+        
+        var testemail = new RegExp("[a-z0-9]+@[a-z]+\.[a-z]{2,3}");
+        var testphone = new RegExp("^[6-9][0-9]{9}$");
+        var testaadhar = new RegExp("^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}$");
+        var testusn = new RegExp("(?=(.*[a-zA-Z])(?=.*[0-9]))");
+ 
+
+        if (search != "") {
+          $("#search").removeClass("is-invalid");
+        } else {
+          $("#search").addClass("is-invalid");
+          e.preventDefault();
+        } 
+
+      })
+
+
+      $("#usertable").DataTable({
+        lengthMenu: [
+          [5, 10, 25, 50, -1],
+          [5, 10, 25, 50, 'All'],
+        ],
+      });
+    })
+  </script>
+</body>
+
+</html>

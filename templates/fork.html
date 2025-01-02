@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fork Recipe - {{ recipe[2] }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    .bg-cover {
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="min-vh-100 d-flex flex-column bg-cover">
+
+    <nav class="navbar navbar-expand-lg bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand text-white fw-bold" href="#"><i class="fa-solid fa-bowl-food"></i> RECIPE ROVER</a>
+        <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <i class="fa-solid fa-bars text-white"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link text-white fw-bold" aria-current="page" href="{{ url_for('search') }}">Search</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white fw-bold" href="{{ url_for('myrecipes') }}">My Recipes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white fw-bold" href="{{ url_for('upload') }}">Upload</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white fw-bold" href="{{ url_for('logout') }}">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid bg-dark">
+
+      <div class="card border-0 bg-dark mt-5 mb-5">
+        <div class="card-body d-flex justify-content-between align-items-center p-3">
+          <div>
+            <h2 class="text-white fw-bold">Fork Recipe</h2>
+            <h6 class="text-white fw-bold">{{ recipe[2] }}</h6>
+          </div>
+          <form>
+            <div class="input-group gap-3">
+              <button type="submit" form="saveforkform" class="btn btn-warning shadow-none rounded-pill">Done</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="container bg-white my-4">
+
+      <form method="post" id="saveforkform">
+
+        <div class="row">
+          <div class="col-md-6 h3 fw-bold text-warning text-decoration-underline link-offset-3">
+            Original Recipe
+          </div>
+          <div class="col-md-6 h3 fw-bold text-warning text-decoration-underline link-offset-3">
+            Forked Recipe
+          </div>
+        </div>
+
+
+        <div class="row gx-2">
+          <div class="col-md-6">
+            <div class="d-flex align-items-center gap-3 my-4">
+              <h3 class=" text-dark fw-bold">Ingredients</h3>
+              -
+              <div class="d-flex align-items-center gap-3">
+                <label for="people">Serves: </label>
+                <input type="number" name="people" id="people"
+                  class="form-control form-control-sm shadow-none border-primary" required value="1"
+                  onkeypress="return (event.charCode >= 49 && event.charCode <= 57) || event.charCode == 8" min="1"
+                  oninput="updateIngredients()">
+              </div>
+            </div>
+            <div id="insdiv">
+              {% for ingredient_line in recipe[7].split('\n') %}
+              {% if ingredient_line != '' %}
+              <p>{{ ingredient_line }}</p>
+              {% endif %}
+              {% endfor %}
+            </div>
+            <!-- <p>{{recipe[7]}}</p>  -->
+            <input type="hidden" id="original-value" value="{{recipe[7]}}">
+          </div>
+          <div class="col-md-6 ">
+            <div class="d-flex mt-4 align-items-center gap-3">
+              <h3 class="text-dark fw-bold">Ingredients</h3>
+              -
+              <button type="button" id="copying" class="btn btn-sm btn-warning shadow-none rounded-pill fw-bold">Update
+                Recipe To This Serving</button>
+            </div>
+            <h6 class="fst-italic text-danger mb-2" id="percentage-difference" style="display: none;"></h6>
+            <h6 class="fst-italic text-dark">New line seperated</h6>
+            <div class="position-relative">
+              <textarea name="ingredients" id="ingredients"
+                class="form-control shadow-none border-dark flex-fill">{{recipe[7]}}</textarea>
+              <div class="invalid-tooltip rounded-3 ">
+                * Enter Ingredients
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" name="recipe" value="{{ recipe[1] }}">
+
+        <div class="row gx-5">
+          <div class="col-md-6">
+            <h3 class="my-4 text-dark fw-bold">Instructions</h3>
+            {% for instruction_line in recipe[6].split('\n') %}
+            <p>{{ instruction_line }}</p>
+            {% endfor %}
+            <!-- <p>{{recipe[6]}}</p>  -->
+            <input type="hidden" id="original-value2" value="{{recipe[6]}}">
+          </div>
+
+          <div class="col-md-6 position-relative">
+            <h3 class="mt-4 text-dark fw-bold">Instructions</h3>
+            <h6 class="fst-italic text-danger mb-2" id="percentage-difference2" style="display: none;"></h6>
+            <h6 class="fst-italic text-dark">New line seperated</h6>
+            <div class="position-relative">
+              <textarea name="instructions" id="instructions"
+                class="form-control shadow-none border-dark">{{recipe[6]}}</textarea>
+              <div class="invalid-tooltip rounded-3 ">
+                * Enter Instructions
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+
+
+
+    <div class="flex-grow-1"></div>
+
+    <footer class="bg-secondary text-uppercase text-white text-center border-top border-dark">
+      RECIPE ROVER © <span id="year"></span>
+    </footer>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+
+  <script>
+    $(function () {
+
+      $("#year").html(new Date().getFullYear());
+
+      $("#copying").on("click", function () {
+        var textContent = $("#insdiv")[0].innerText.trim();
+        $("#ingredients").val(textContent);
+      });
+
+
+      $("#saveforkform").on("submit", function (e) {
+        debugger;
+
+        var ingredients = $("#ingredients").val()
+        var instructions = $("#instructions").val()
+        var testemail = new RegExp("[a-z0-9]+@[a-z]+\.[a-z]{2,3}");
+        var testphone = new RegExp("^[6-9][0-9]{9}$");
+        var testaadhar = new RegExp("^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}$");
+        var testusn = new RegExp("(?=(.*[a-zA-Z])(?=.*[0-9]))");
+
+
+        if (ingredients != "") {
+          $("#ingredients").removeClass("is-invalid");
+        } else {
+          $("#ingredients").addClass("is-invalid");
+          e.preventDefault();
+        }
+
+
+        if (instructions != "") {
+          $("#instructions").removeClass("is-invalid");
+        } else {
+          $("#instructions").addClass("is-invalid");
+          e.preventDefault();
+        }
+
+      })
+
+      $('#ingredients').on('focus', function () {
+        $(this).css('height', 'auto').css('height', this.scrollHeight + 'px');
+      });
+
+      $('#instructions').on('focus', function () {
+        $(this).css('height', 'auto').css('height', this.scrollHeight + 'px');
+      });
+
+      $('#ingredients').on('input', function () {
+        $(this).css('height', 'auto').css('height', this.scrollHeight + 'px');
+      });
+
+      $('#instructions').on('input', function () {
+        $(this).css('height', 'auto').css('height', this.scrollHeight + 'px');
+      });
+
+      $('#ingredients').focus();
+      $('#instructions').focus();
+
+      const $ingredients = $('#ingredients');
+      const $percentageDifference = $('#percentage-difference');
+      const originalValue = $('#original-value').val();
+
+      $ingredients.on('input', function () {
+        const newValue = $(this).val();
+        $.ajax({
+          url: '{{ url_for("ingdifference") }}',
+          type: 'POST',
+          data: {
+            'originalvalue': originalValue,
+            'newvalue': newValue
+          },
+          success: function (data) {
+            $percentageDifference.show()
+            $percentageDifference.text(`${data.percentage_same.toFixed(1)}% Percentage Same`);
+          },
+          error: function () {
+            console.error('Error calculating percentage same');
+          }
+        });
+
+      });
+
+      const $instructions = $('#instructions');
+      const $percentageDifference2 = $('#percentage-difference2');
+      const originalValue2 = $('#original-value2').val();
+
+      $instructions.on('input', function () {
+        const newValue2 = $(this).val();
+        $.ajax({
+          url: '{{ url_for("insdifference") }}',
+          type: 'POST',
+          data: {
+            'originalvalue2': originalValue2,
+            'newvalue2': newValue2
+          },
+          success: function (data) {
+            $percentageDifference2.show()
+            $percentageDifference2.text(`${data.percentage_same.toFixed(1)}% Percentage Same`);
+          },
+          error: function () {
+            console.error('Error calculating percentage same');
+          }
+        });
+
+      });
+
+    })
+  </script>
+
+  <script>
+    var previousPeople = 1;
+
+    function updateIngredients() {
+      var people = parseInt(document.getElementById('people').value);
+      var paragraphs = document.getElementById('insdiv').getElementsByTagName('p');
+
+      var adjustmentFactor = people / previousPeople;
+
+      for (var i = 0; i < paragraphs.length; i++) {
+        var text = paragraphs[i].innerText.trim();
+        var regex = /^(\d+)\s(.*)/;
+        var match = text.match(regex);
+
+        if (match !== null) {
+          var quantity = parseInt(match[1]);
+          var ingredient = match[2];
+          paragraphs[i].innerText = Math.round(quantity * adjustmentFactor) + ' ' + ingredient;
+        }
+      }
+
+      previousPeople = people;
+    }
+  </script>
+
+
+</body>
+
+</html>
